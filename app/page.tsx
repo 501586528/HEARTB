@@ -547,17 +547,36 @@ export default function Home() {
 
   // 更新章节标题中的章节号
   const updateChapterNumbers = (chaptersToUpdate: Chapter[]) => {
-    return chaptersToUpdate.map((chapter, index) => {
-      // 提取原标题中除了章节号之外的部分
-      const titleWithoutNumber = chapter.title.replace(/^Chapter \d+\s*-?\s*/, '');
-      const newTitle = titleWithoutNumber 
-        ? `Chapter ${index + 1} - ${titleWithoutNumber}`
-        : `Chapter ${index + 1}`;
-      
-      return {
-        ...chapter,
-        title: newTitle
-      };
+    let chapterCount = 1;
+    let appendixCount = 1;
+    
+    return chaptersToUpdate.map((chapter) => {
+      // 检查是否是 appendix
+      if (chapter.id.startsWith('appendix-')) {
+        // 对于 appendix，保持 Appendix 格式，不添加 Chapter 前缀
+        const titleWithoutNumber = chapter.title.replace(/^Appendix \d+\s*-?\s*/, '');
+        const newTitle = titleWithoutNumber 
+          ? `Appendix ${appendixCount} - ${titleWithoutNumber}`
+          : `Appendix ${appendixCount}`;
+        
+        appendixCount++;
+        return {
+          ...chapter,
+          title: newTitle
+        };
+      } else {
+        // 对于普通章节，使用 Chapter 格式
+        const titleWithoutNumber = chapter.title.replace(/^Chapter \d+\s*-?\s*/, '');
+        const newTitle = titleWithoutNumber 
+          ? `Chapter ${chapterCount} - ${titleWithoutNumber}`
+          : `Chapter ${chapterCount}`;
+        
+        chapterCount++;
+        return {
+          ...chapter,
+          title: newTitle
+        };
+      }
     });
   };
 
